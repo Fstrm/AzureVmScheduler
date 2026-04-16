@@ -65,12 +65,20 @@ async Task<string?> HandleVmAsync(VirtualMachineResource vm, string subId, DateT
 {
     await semaphore.WaitAsync();
 
+    string powerState;
     try
     {
-        var instanceView = (await vm.InstanceViewAsync()).Value;
-        var powerState = instanceView.Statuses
-            .FirstOrDefault(s => s.Code?.StartsWith("PowerState/") == true)
-            ?.Code?.Replace("PowerState/", "") ?? "unknown";
+        try
+        {
+            var instanceView = (await vm.InstanceViewAsync()).Value;
+            powerState = instanceView.Statuses
+                .FirstOrDefault(s => s.Code?.StartsWith("PowerState/") == true)?
+                .Code?.Replace("PowerState/", "") ?? "unknown";
+        }
+        finally
+        {
+            semaphore.Release();
+        }
 
         var autoshutdown = vm.Data.Tags.TryGetValue("Autoshutdown", out var tagValue) && tagValue == "1";
         var computerName = vm.Data.OSProfile?.ComputerName ?? vm.Data.Name;
@@ -86,10 +94,6 @@ async Task<string?> HandleVmAsync(VirtualMachineResource vm, string subId, DateT
     {
         Console.WriteLine($"{vm.Data.Name} error: {ex.Message}");
         return null;
-    }
-    finally
-    {
-        semaphore.Release();
     }
 }
 
