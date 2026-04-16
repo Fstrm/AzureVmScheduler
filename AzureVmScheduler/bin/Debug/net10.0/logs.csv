@@ -1,0 +1,4 @@
+Timestamp,SubscriptionId,ResourceGroup,ComputerName,PowerState
+2026-04-16 19:23:33Z,4a753b05-676e-4832-b035-f7a90ed651e0,TEST-RG,test-vm-1,running
+2026-04-16 19:23:46Z,4a753b05-676e-4832-b035-f7a90ed651e0,TEST-RG,test-vm-1,running
+2026-04-16 19:28:46Z,4a753b05-676e-4832-b035-f7a90ed651e0,TEST-RG,test-vm-1,running
